@@ -1,5 +1,9 @@
 <html>
+	<head>
+		<title>JawaPeleker</title>
+		<link rel="stylesheet" href="view/core.css">
+	</head>
     <body>
-        <p>Gay</p>
+        <h1>Hanya preview</h1>
     </body>
 </html>
