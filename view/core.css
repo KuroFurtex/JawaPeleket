@@ -1,7 +1,30 @@
+:root {
+	--blue-light: #DDDDFF;
+}
+
 html {
 	font-family: "Arial";
 }
 
 body {
 	margin: 0;
+}
+
+.sidebar {
+	display: flex;
+	position: fixed;
+	height: 100vh;
+	width: 25vw;
+	top: 75px;
+	background-color: var(--blue-light)
+}
+
+nav {
+	height: 75px;
+	background-color: #FFCCFF;
+}
+
+.container {
+	margin: 25px 5vw 0 30vw;
+	width: auto;
 }
