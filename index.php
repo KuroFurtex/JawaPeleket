@@ -9,7 +9,6 @@
 	
     <body>
 		<?php
-			include 'view/sidebar.php';
 			include 'view/navbar.php'
 		?>
 		<div class="container">
