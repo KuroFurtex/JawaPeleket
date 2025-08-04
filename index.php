@@ -5,6 +5,7 @@
 		<link rel="stylesheet" href="view/core.css">
 		
 		<script src="view/js/bootstrap.min.js"></script>
+		<script src="FurtexUtility.js"></script>
 	</head>
 	
     <body>
