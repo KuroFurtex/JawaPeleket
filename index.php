@@ -1,11 +1,18 @@
+<?php
+	include 'config.php';
+	if (isset($_SESSION['pesan'])) {
+		?>
+			<script>alert(<?= $_SESSION['pesan'] ?>)</script>
+		<?php
+	}
+?>
 <html>
 	<head>
 		<title>JawaPeleker</title>
 		<link rel="stylesheet" href="view/css/bootstrap.min.css">
 		<link rel="stylesheet" href="view/core.css">
-		
-		<script src="view/js/bootstrap.min.js"></script>
-		<script src="FurtexUtility.js"></script>
+		<script type="text/javascript" src="view/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="FurtexUtility.js"></script>
 	</head>
 	
     <body>
@@ -31,15 +38,51 @@
 
 			<?php
 				$p = isset($_GET['p']) ? htmlspecialchars($_GET['p']) : 'home';
-				switch($p) {
-					case "home":
-						include "page/home.php";
-						break;
-					default:
+				
+				if (isset($_GET['ajax'])) {
+					if (file_exists("page/$p.php")) {
+						include "page/$p.php";
+					} else {
 						include "page/404.php";
-						break;
+					}
+				}
+				if (file_exists("page/$p.php")) {
+					include "page/$p.php";
+				} else {
+					include "page/404.php";
 				}
 			?>
 		</div>
+		<?php
+			include 'view/footer.php'
+		?>
     </body>
+	<script>
+		document.querySelectorAll('a[data-page]').forEach(link => {
+		  link.addEventListener('click', e => {
+			e.preventDefault();
+			let page = link.getAttribute('data-page');
+
+			// Load page content without full reload
+			fetch(`/JawaPeleket/page/${page}.php?ajax=1`)
+			  .then(res => res.text())
+			  .then(html => {
+				document.querySelector('.container').innerHTML = html;
+				history.pushState({ page }, '', `/JawaPeleket/?p=${page}`);
+			  })
+			  .catch(err => console.error('Error loading page:', err));
+		  });
+		});
+
+		// Handle browser back/forward
+		window.addEventListener('popstate', e => {
+		  if (e.state && e.state.page) {
+			fetch(`/JawaPeleket/page/${e.state.page}.php?ajax=1`)
+			  .then(res => res.text())
+			  .then(html => {
+				document.querySelector('.container').innerHTML = html;
+			  });
+		  }
+		});
+	</script>
 </html>

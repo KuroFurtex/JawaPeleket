@@ -1,23 +1,44 @@
-:root {
-	--blue-light: #DDDDFF;
-}
-
 html {
 	font-family: "Arial";
 }
 
 body {
 	margin: 0;
+	background: linear-gradient(to right, #1e1e1e, #4e342e);
+    font-family: 'Inter', sans-serif;
+    color: #eeeeee;
 }
 
 nav {
 	height: 75px;
-	background-color: #FFCCFF;
+	background: linear-gradient(to right, #4e4e4e, #7e645e);
 }
 
 .container {
-	margin: 25px 5vw 0 5vw;
-	width: auto;
+	margin-top: 25px;
+	width: 90vw;
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+	transform: perspective(5cm) rotateX(-20deg) translateY(-250px);
+  }
+  to {
+    opacity: 1;
+	transform: perspective(5cm);
+  }
+}
+
+@keyframes close {
+  from {
+    opacity: 1;
+	transform: perspective(5cm);
+  }
+  to {
+    opacity: 0;
+	transform: perspective(5cm) rotateX(20deg) translateY(250px);
+  }
 }
 
 dialog {
@@ -37,4 +58,42 @@ dialog {
 		flex-direction: column;
 		gap: 0.5em;
 	}
+	transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
+	animation: close 0.5s forwards;
+	&[open] {
+		animation: open 0.5s forwards;
+	}
+}
+
+dialog::backdrop {
+	background: linear-gradient(to right, #1e1e1eee, #4e342eee);
+	transition: display 0.2s ease;
+}
+
+.site-footer {
+  margin-top: auto;         /* pushes footer to bottom */
+  min-height: 40vh;        /* footer takes at least this much */
+  width: 100%;
+  background: #111;
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
+  box-sizing: border-box;
+  margin-top: 50px;
+}
+
+.col, .container-table {
+	background-color: white;
+	border-radius: 25px;
+	padding: 2%;
+	color: #222222;
+}
+
+.btn-coklat {
+	background-color: #6d4c41;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-weight: 500;
 }
