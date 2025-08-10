@@ -86,6 +86,7 @@ dialog::backdrop {
 	background-color: white;
 	border-radius: 25px;
 	padding: 2%;
+	margin: 5px;
 	color: #222222;
 }
 
