@@ -48,6 +48,35 @@ var FurtexUtil = {
 		  wrapper.appendChild(check);
 		  wrapper.append(label);
 		  formdiv.appendChild(wrapper);
+		} else if (type === "dropdown") {
+			const wrapper = document.createElement("label");
+			wrapper.textContent = label;
+			wrapper.style.display = "flex";
+			wrapper.style.flexDirection = "column";
+
+			const select = document.createElement("select");
+			select.name = name;
+			select.id = name;
+			inputs[label] = select;
+
+			if (Array.isArray(extra)) {
+				extra.forEach(opt => {
+				  const option = document.createElement("option");
+				  if (typeof opt === "object") {
+					// { value: 'val', text: 'Display' }
+					option.value = opt.value;
+					option.textContent = opt.text;
+				  } else {
+					// "OptionText"
+					option.value = opt;
+					option.textContent = opt;
+				  }
+				  select.appendChild(option);
+				});
+			}
+
+			wrapper.appendChild(select);
+			formdiv.appendChild(wrapper);
 		}
 	  }
 

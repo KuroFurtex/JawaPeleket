@@ -44,6 +44,69 @@ function FetchSpecific($table, $filter, $rowsNeeded = "*") {
     return $rows;
 }
 
+function addToTable($columns, $table, $values) {
+    global $conn;
+
+    if (count($columns) !== count($values)) {
+        return ["success" => false, "error" => "Columns and values count mismatch nya~! 😿"];
+    }
+
+    // Escape table and column names carefully
+    $table = mysqli_real_escape_string($conn, $table);
+    $safeCols = array_map(function($col) use ($conn) {
+        return "`" . mysqli_real_escape_string($conn, $col) . "`";
+    }, $columns);
+
+    // Prepare placeholders for prepared statement
+    $placeholders = implode(", ", array_fill(0, count($values), "?"));
+    $cols = implode(", ", $safeCols);
+
+    $sql = "INSERT INTO `$table` ($cols) VALUES ($placeholders)";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        return ["success" => false, "error" => "Prepare failed: " . $conn->error];
+    }
+
+    // Dynamically bind params (all as strings for simplicity)
+    $types = str_repeat("s", count($values));
+    $stmt->bind_param($types, ...$values);
+
+    if ($stmt->execute()) {
+        return ["success" => true, "message" => "Row added successfully nya~! 🎉"];
+    } else {
+        return ["success" => false, "error" => "Execute failed: " . $stmt->error];
+    }
+}
+
+function updateValueTable($table, $values, $filter) {
+    global $conn;
+    $table = mysqli_real_escape_string($conn, $table);
+
+    // Create `col1 = ?, col2 = ?` part
+    $setClause = implode(", ", array_map(function($col) {
+        return "$col = ?";
+    }, array_keys($values)));
+
+    $sql = "UPDATE `$table` SET $setClause WHERE $filter";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return ["success" => false, "error" => "Prepare failed: " . $conn->error];
+    }
+
+    // Bind parameters
+    $types = str_repeat("s", count($values)); // all strings for now
+    $stmt->bind_param($types, ...array_values($values));
+
+    // Execute
+    if ($stmt->execute()) {
+        return ["success" => true, "message" => "Table updated successfully nya~! ✨"];
+    } else {
+        return ["success" => false, "error" => "Update failed: " . $stmt->error];
+    }
+}
+
+
 // Function 3: Check if user with username + password exists
 function UserCheck($username, $password) {
     global $conn;

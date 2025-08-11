@@ -11,7 +11,7 @@ $logged = isUserLoggedIn()
 if ($logged) {
 	?>
 	<div class="d-flex justify-content-between mb-3">
-	<a href="tambah.php" class="btn btn-coklat">+ Tambah Jadwal</a>
+	<a href="#" onclick="FurtexUtil.showAnimated(tambah)" class="btn btn-coklat">+ Tambah Jadwal</a>
 	</div>
 	<?php
 }
@@ -58,3 +58,29 @@ if ($logged) {
   </tbody>
 </table>
 </div>
+
+<script>
+let tambah;
+fetch(`/JawaPeleket/act/getRows.php?table=kelas`)
+  .then(res => res.json())
+  .then(data => {
+    const roleOptions = data.map(row => ({
+      value: row.id,
+      text: row.nama_kelas
+    }));
+
+    tambah = FurtexUtil.createPopup(
+      "Tambah Jadwal Pelajaran",
+      "OK",
+      "Cancel",
+      [
+        ["dropdown", "Kelas", roleOptions, "kelas"],
+		["textbox", "Jam Mulai", "time", "jam-mulai"],
+		["textbox", "Jam Selesai", "time", "jam-selesai"],
+		["textbox", "Mata Pelajaran", "text", "pelajaran"],
+      ],
+	  "POST",
+	  "act/addPelajaran.php"
+    );
+  });
+</script>

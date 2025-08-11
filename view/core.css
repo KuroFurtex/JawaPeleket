@@ -1,3 +1,7 @@
+:root {
+	--shadow: #00000088;
+}
+
 html {
 	font-family: "Arial";
 }
@@ -12,6 +16,11 @@ body {
 nav {
 	height: 75px;
 	background: linear-gradient(to right, #4e4e4e, #7e645e);
+	box-shadow: 0px 5px 14px 0px var(--shadow);
+}
+
+a.nav-link, .kf-logo {
+	color: #eeeeee !important;
 }
 
 .container {
@@ -23,6 +32,17 @@ nav {
   from {
     opacity: 0;
 	transform: perspective(5cm) rotateX(-20deg) translateY(-250px);
+  }
+  to {
+    opacity: 1;
+	transform: perspective(5cm);
+  }
+}
+
+@keyframes open2 {
+  from {
+    opacity: 0;
+	transform: perspective(5cm) scale(90%);
   }
   to {
     opacity: 1;
@@ -46,7 +66,7 @@ dialog {
 	padding: 1em;
 	border: none;
 	border-radius: 10px;
-	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 5px 14px 0px var(--shadow);
 	max-width: 400px;
 	background: #fff;
 	z-index: 9999;
@@ -59,9 +79,11 @@ dialog {
 		gap: 0.5em;
 	}
 	transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
-	animation: close 0.5s forwards;
+	animation: close 0.35s forwards;
+	animation-timing-function: cubic-bezier(0.6, -0.28, 0.735, 0.045);
 	&[open] {
 		animation: open 0.5s forwards;
+		animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 }
 
@@ -88,6 +110,7 @@ dialog::backdrop {
 	padding: 2%;
 	margin: 5px;
 	color: #222222;
+	box-shadow: 0px 5px 14px 0px var(--shadow);
 }
 
 .btn-coklat {
@@ -97,4 +120,9 @@ dialog::backdrop {
     border-radius: 8px;
     padding: 6px 16px;
     font-weight: 500;
+}
+
+.wow {
+	animation: open2 0.5s forwards;
+	animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

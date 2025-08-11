@@ -19,7 +19,7 @@
 		<?php
 			include 'view/navbar.php'
 		?>
-		<div class="container">
+		<div class="container wow">
 			<?php if (isset($_GET['error'])): ?>
             <p style="color: red;">
                 <?php
@@ -58,6 +58,12 @@
 		?>
     </body>
 	<script>
+		function replayAnimation(el, anim) {
+			el.style.animation = 'none'; // Stop the animation
+			setTimeout(() => {
+			  el.style.animation = ''; // Reset to original animation
+			}, 10); // Small delay to ensure reset
+		}
 		document.querySelectorAll('a[data-page]').forEach(link => {
 		  link.addEventListener('click', e => {
 			e.preventDefault();
@@ -67,6 +73,7 @@
 			fetch(`/JawaPeleket/page/${page}.php?ajax=1`)
 			  .then(res => res.text())
 			  .then(html => {
+				replayAnimation(document.querySelector('.container'), 'wow');
 				document.querySelector('.container').innerHTML = html;
 				history.pushState({ page }, '', `/JawaPeleket/?p=${page}`);
 			  })
@@ -80,6 +87,7 @@
 			fetch(`/JawaPeleket/page/${e.state.page}.php?ajax=1`)
 			  .then(res => res.text())
 			  .then(html => {
+				replayAnimation(document.querySelector('.container'), 'wow');
 				document.querySelector('.container').innerHTML = html;
 			  });
 		  }
