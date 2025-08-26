@@ -93,11 +93,16 @@ fetch(`/JawaPeleket/act/getRows.php?table=users`)
 		  "act/deletePelajaran.php"
 		);
 
-        // add hidden ID field for edit
+        // add hidden ID field for edit and delete
         const idHidden = document.createElement("input");
         idHidden.type = "hidden";
         idHidden.name = "id";
         edit.querySelector("form").appendChild(idHidden);
+		
+		const removeHidden = document.createElement("input");
+		removeHidden.type = "hidden";
+		removeHidden.name = "id";
+		remove.querySelector("form").appendChild(removeHidden);
       });
   });
 
@@ -117,6 +122,20 @@ function openEditPopup(row) {
 
   FurtexUtil.showAnimated(edit);
 }
+
+function openRemovePopup(row) {
+  // set hidden id
+  remove.querySelector("input[name='id']").value = row.id;
+
+  // update text to show subject name dynamically
+  const caption = remove.querySelector("p");
+  caption.textContent = `Apakah anda yakin ingin menghapus "${row.mata_pelajaran}"?`;
+  const header = remove.querySelector("h3");
+  header.textContent = `Hapus "${row.mata_pelajaran}"?`;
+
+  FurtexUtil.showAnimated(remove);
+}
+
 
 </script>
 
@@ -164,7 +183,9 @@ if ($logged) {
 			<a href="#"
 			   onclick="openEditPopup(<?= htmlspecialchars(json_encode($row)) ?>)"
 			   class="btn btn-sm btn-coklat">Edit</a>
-			<a href="hapus.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="FurtexUtil.showAnimated(remove)">Hapus</a>
+			<a href="#"
+			   onclick='openRemovePopup(<?= htmlspecialchars(json_encode($row)) ?>)'
+			   class="btn btn-sm btn-danger">Hapus</a>
 		  </td>
 		  <?php
 		}
