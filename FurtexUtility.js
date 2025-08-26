@@ -164,5 +164,24 @@ var FurtexUtil = {
 		setTimeout(() => {
 			dialog.close();
 		}, 200); // match your CSS transition duration!
+	},
+	
+	editPopup: function(dialog, values) {
+	  // values = { inputName: newValue, anotherName: newValue, ... }
+	  const form = dialog.querySelector("form");
+	  if (!form) return;
+
+	  Object.entries(values).forEach(([name, newValue]) => {
+		const el = form.querySelector(`[name="${name}"]`);
+		if (!el) return;
+
+		if (el.type === "checkbox") {
+		  el.checked = Boolean(newValue);
+		} else if (el.tagName === "SELECT") {
+		  el.value = newValue;
+		} else {
+		  el.value = newValue;
+		}
+	  });
 	}
 }
