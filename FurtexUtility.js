@@ -48,7 +48,7 @@ var FurtexUtil = {
 		  wrapper.appendChild(check);
 		  wrapper.append(label);
 		  formdiv.appendChild(wrapper);
-		} else if (type === "dropdown") {
+		} else if (type === "dropdown") { // -------------------------------- DROPDOWN
 			const wrapper = document.createElement("label");
 			wrapper.textContent = label;
 			wrapper.style.display = "flex";

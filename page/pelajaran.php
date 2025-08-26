@@ -2,8 +2,13 @@
 if (!isset($conn)) {
 	include '../config.php';
 }
-$result = mysqli_query($conn, "SELECT * FROM jadwal_pelajaran");
-$logged = isUserLoggedIn()
+$result = FetchSpecific(
+    "jadwal_pelajaran JOIN kelas ON jadwal_pelajaran.kelas_id = kelas.id",
+    "1=1",
+    "*",
+    false,
+);
+$logged = isUserLoggedIn();
 ?>
 <h2>Data Jadwal Pelajaran</h2>
 
@@ -23,6 +28,7 @@ if ($logged) {
 	<tr>
 	  <th>No</th>
 	  <th>Hari</th>
+	  <th>Kelas</th>
 	  <th>Mata Pelajaran</th>
 	  <th>Jam Mulai</th>
 	  <th>Jam Selesai</th>
@@ -36,10 +42,11 @@ if ($logged) {
   <tbody>
 	<?php 
 	$no = 1;
-	while ($row = mysqli_fetch_assoc($result)) : ?>
+	foreach($result as $row) { ?>
 	<tr>
 	  <td><?= $no++ ?></td>
 	  <td><?= htmlspecialchars($row['hari']) ?></td>
+	  <td><?= htmlspecialchars($row['kelas_id']) ?></td>
 	  <td><?= htmlspecialchars($row['mata_pelajaran']) ?></td>
 	  <td><?= htmlspecialchars($row['jam_mulai']) ?></td>
 	  <td><?= htmlspecialchars($row['jam_selesai']) ?></td>
@@ -54,7 +61,7 @@ if ($logged) {
 		}
 		?>
 	</tr>
-	<?php endwhile; ?>
+	<?php } ?>
   </tbody>
 </table>
 </div>

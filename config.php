@@ -28,11 +28,13 @@ function FetchAll($table) {
 }
 
 // Function 2: Fetch specific row(s) with a filter
-function FetchSpecific($table, $filter, $rowsNeeded = "*") {
+function FetchSpecific($table, $filter = "1=1", $rowsNeeded = "*", $escapeTable = true) {
     global $conn;
-    $table = mysqli_real_escape_string($conn, $table);
-    // 💡 DO NOT escape $filter so you can pass custom stuff like "id = 1" or "username = 'meow'"
-    $sql = "SELECT $rowsNeeded FROM `$table` WHERE $filter";
+    if ($escapeTable) {
+        $table = mysqli_real_escape_string($conn, $table);
+        $table = "`$table`";
+    }
+    $sql = "SELECT $rowsNeeded FROM $table WHERE $filter";
     $result = mysqli_query($conn, $sql);
 
     if (!$result) return false;
@@ -43,6 +45,7 @@ function FetchSpecific($table, $filter, $rowsNeeded = "*") {
     }
     return $rows;
 }
+
 
 function addToTable($columns, $table, $values) {
     global $conn;
@@ -169,27 +172,27 @@ function beginSession() {
 
 // Log in a user
 function loginUser($username) {
-    session_start();
+    beginSession();
     $_SESSION['logged_in'] = true;
     $_SESSION['username'] = $username;
 }
 
 // Log out a user
 function logoutUser() {
-    session_start();
+    beginSession();
     session_unset();
     session_destroy();
 }
 
 // Check if user is logged in
 function isUserLoggedIn() {
-    session_start();
+    beginSession();
     return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 }
 
 // Get current username
 function getCurrentUsername() {
-    session_start();
+    beginSession();
     return $_SESSION['username'] ?? null;
 }
 
