@@ -183,5 +183,18 @@ var FurtexUtil = {
 		  el.value = newValue;
 		}
 	  });
+	},
+	
+	pageCleanups: [],
+
+	// Register cleanup
+	registerCleanup: function(fn) {
+		this.pageCleanups.push(fn);
+	},
+
+	// Run & clear cleanups
+	runCleanups: function() {
+		this.pageCleanups.forEach(fn => fn());
+		this.pageCleanups = [];
 	}
 }

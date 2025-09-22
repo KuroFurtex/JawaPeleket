@@ -19,9 +19,6 @@
 		<li class="nav-item">
           <a class="nav-link active" href="#" data-page="pelajaran">Jadwal Pelajaran</a>
         </li>
-		<li class="nav-item">
-          <a class="nav-link active" href="#" data-page="piket">Jadwal Piket</a>
-        </li>
       </ul>
       <div class="d-flex">
 		<?php if (!isUserLoggedIn()) {

@@ -68,6 +68,7 @@
 		  link.addEventListener('click', e => {
 			e.preventDefault();
 			let page = link.getAttribute('data-page');
+			FurtexUtil.runCleanups();
 
 			// Load page content without full reload
 			fetch(`/JawaPeleket/page/${page}.php?ajax=1`)
@@ -84,11 +85,25 @@
 		// Handle browser back/forward
 		window.addEventListener('popstate', e => {
 		  if (e.state && e.state.page) {
+			FurtexUtil.runCleanups();
 			fetch(`/JawaPeleket/page/${e.state.page}.php?ajax=1`)
 			  .then(res => res.text())
 			  .then(html => {
 				replayAnimation(document.querySelector('.container'), 'wow');
 				document.querySelector('.container').innerHTML = html;
+				
+				// Run any scripts inside the new content
+				const scripts = document.querySelector('.container').querySelectorAll("script");
+				scripts.forEach(oldScript => {
+				  const newScript = document.createElement("script");
+				  if (oldScript.src) {
+					newScript.src = oldScript.src; // external JS
+				  } else {
+					newScript.textContent = oldScript.textContent; // inline JS
+				  }
+				  document.body.appendChild(newScript);
+				  oldScript.remove();
+				});
 			  });
 		  }
 		});

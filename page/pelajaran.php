@@ -22,7 +22,7 @@ $result = FetchSpecific(
 
 $logged = isUserLoggedIn();
 ?>
-<h2>Data Jadwal Pelajaran</h2>
+<h1>Data Jadwal Pelajaran</h1>
 
 <script>
 let tambah, edit, remove;
@@ -82,7 +82,7 @@ fetch(`/JawaPeleket/act/getRows.php?table=users`)
           "act/editPelajaran.php"
         );
 		
-		remove = FurtexUtil.createPopup(
+		hapus = FurtexUtil.createPopup(
 		  "Hapus <NAMA_PELAJARAN>?",
 		  "Hapus",
 		  "Cancel",
@@ -99,10 +99,16 @@ fetch(`/JawaPeleket/act/getRows.php?table=users`)
         idHidden.name = "id";
         edit.querySelector("form").appendChild(idHidden);
 		
-		const removeHidden = document.createElement("input");
-		removeHidden.type = "hidden";
-		removeHidden.name = "id";
-		remove.querySelector("form").appendChild(removeHidden);
+		const hapusHidden = document.createElement("input");
+		hapusHidden.type = "hidden";
+		hapusHidden.name = "id";
+		hapus.querySelector("form").appendChild(hapusHidden);
+		
+		FurtexUtil.registerCleanup(() => {
+			tambah.remove();
+			edit.remove();
+			hapus.remove();
+			});
       });
   });
 
@@ -125,15 +131,15 @@ function openEditPopup(row) {
 
 function openRemovePopup(row) {
   // set hidden id
-  remove.querySelector("input[name='id']").value = row.id;
+  hapus.querySelector("input[name='id']").value = row.id;
 
   // update text to show subject name dynamically
-  const caption = remove.querySelector("p");
+  const caption = hapus.querySelector("p");
   caption.textContent = `Apakah anda yakin ingin menghapus "${row.mata_pelajaran}"?`;
-  const header = remove.querySelector("h3");
+  const header = hapus.querySelector("h3");
   header.textContent = `Hapus "${row.mata_pelajaran}"?`;
 
-  FurtexUtil.showAnimated(remove);
+  FurtexUtil.showAnimated(hapus);
 }
 
 
@@ -143,7 +149,7 @@ function openRemovePopup(row) {
 if ($logged) {
 	?>
 	<div class="d-flex justify-content-between mb-3">
-	<a href="#" onclick="FurtexUtil.showAnimated(tambah)" class="btn btn-coklat">+ Tambah Jadwal</a>
+	<a href="#" onclick="FurtexUtil.showAnimated(tambah)" class="btn btn-a">+ Tambah Jadwal</a>
 	</div>
 	<?php
 }
@@ -182,7 +188,7 @@ if ($logged) {
 		  <td>
 			<a href="#"
 			   onclick="openEditPopup(<?= htmlspecialchars(json_encode($row)) ?>)"
-			   class="btn btn-sm btn-coklat">Edit</a>
+			   class="btn btn-sm btn-b">Edit</a>
 			<a href="#"
 			   onclick='openRemovePopup(<?= htmlspecialchars(json_encode($row)) ?>)'
 			   class="btn btn-sm btn-danger">Hapus</a>

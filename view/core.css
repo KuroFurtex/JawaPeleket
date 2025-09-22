@@ -1,5 +1,11 @@
 :root {
-	--shadow: #00000088;
+	--shadow: #00000022;
+	--primary: #90d0d0;
+	--primary-op5: #90ffff99;
+	--primary-whiter: #ddffff;
+	--secondary: #9090c0;
+	--secondary-op5: #9090ff99;
+	--secondary-whiter: #ddddff;
 }
 
 html {
@@ -8,19 +14,26 @@ html {
 
 body {
 	margin: 0;
-	background: linear-gradient(to right, #1e1e1e, #4e342e);
+	background: linear-gradient(to right, var(--primary), var(--secondary));
     font-family: 'Inter', sans-serif;
-    color: #eeeeee;
+    color: #002222;
 }
 
 nav {
 	height: 75px;
-	background: linear-gradient(to right, #4e4e4e, #7e645e);
+	background: linear-gradient(to right, var(--primary-whiter), var(--secondary-whiter));
 	box-shadow: 0px 5px 14px 0px var(--shadow);
 }
 
+h1 {
+	color: #fff;
+	font-weight: bolder;
+	font-size: 3vw;
+	text-shadow: 0px 5px 14px var(--shadow);
+}
+
 a.nav-link, .kf-logo {
-	color: #eeeeee !important;
+	color: #002222 !important;
 }
 
 .container {
@@ -88,16 +101,16 @@ dialog {
 }
 
 dialog::backdrop {
-	background: linear-gradient(to right, #1e1e1eee, #4e342eee);
+	background: linear-gradient(to right, var(--primary-op5), var(--secondary-op5));
 	transition: display 0.2s ease;
 }
 
 .site-footer {
   margin-top: auto;         /* pushes footer to bottom */
-  min-height: 40vh;        /* footer takes at least this much */
+  min-height: 45vh;        /* footer takes at least this much */
   width: 100%;
-  background: #111;
-  color: #fff;
+  background: #eff;
+  color: #000;
   padding: 2rem;
   text-align: center;
   box-sizing: border-box;
@@ -113,11 +126,20 @@ dialog::backdrop {
 	box-shadow: 0px 5px 14px 0px var(--shadow);
 }
 
-.btn-coklat {
-	background-color: #6d4c41;
+.btn-a {
+	background-color: #ddffff;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 16px;
+    font-weight: 500;
+}
+
+.btn-b {
+	background-color: #0050f0;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     padding: 6px 16px;
     font-weight: 500;
 }
