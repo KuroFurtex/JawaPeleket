@@ -23,11 +23,11 @@
       <div class="d-flex">
 		<?php if (!isUserLoggedIn()) {
 			?>
-			<a class="nav-link" href="#" onclick="FurtexUtil.showAnimated(login)">Login</a>
+			<a class="nav-link" href="javascript:void(0)" onclick="FurtexUtil.showAnimated(login)">Login</a>
 			<?php
 			} else {
 			?>
-			<a class="nav-link" href="#" onclick="FurtexUtil.showAnimated(logout)">Log out</a>
+			<a class="nav-link" href="javascript:void(0)" onclick="FurtexUtil.showAnimated(logout)">Log out</a>
 			<?php
 			}
 		?>

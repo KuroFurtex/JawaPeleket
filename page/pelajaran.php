@@ -24,6 +24,63 @@ $logged = isUserLoggedIn();
 ?>
 <h1>Data Jadwal Pelajaran</h1>
 
+<?php
+if ($logged) {
+	?>
+	<div class="d-flex justify-content-between mb-3">
+	<a href="javascript:void(0)" id="tambahJadwal" class="btn btn-a">+ Tambah Jadwal</a>
+	</div>
+	<?php
+}
+?>
+<div class="container-table">
+<table class="table table-bordered table-striped mb-0">
+  <thead class="table-dark">
+	<tr>
+	  <th>No</th>
+	  <th>Hari</th>
+	  <th>Kelas</th>
+	  <th>Mata Pelajaran</th>
+	  <th>Jam Mulai</th>
+	  <th>Jam Selesai</th>
+	  <?php
+		if ($logged) {
+			echo "<th>Aksi</th>";
+		}
+		?>
+	</tr>
+  </thead>
+  <tbody>
+	<?php 
+	$no = 1;
+	foreach($result as $row) { ?>
+	<tr>
+	  <td><?= $no++ ?></td>
+	  <td><?= htmlspecialchars($row['hari']) ?></td>
+	  <td><?= htmlspecialchars($row['kelas']) ?></td>
+	  <td><?= htmlspecialchars($row['mata_pelajaran']) ?></td>
+	  <td><?= htmlspecialchars($row['jam_mulai']) ?></td>
+	  <td><?= htmlspecialchars($row['jam_selesai']) ?></td>
+	  <?php
+		if ($logged) {
+			?>
+		  <td>
+			<a href="javascript:void(0)"
+			   class="btn btn-sm btn-b edit-btn"
+			   data-row='<?= htmlspecialchars(json_encode($row)) ?>'>Edit</a>
+			<a href="javascript:void(0)"
+			   class="btn btn-sm btn-danger delete-btn"
+			   data-row='<?= htmlspecialchars(json_encode($row)) ?>'>Hapus</a>
+		  </td>
+		  <?php
+		}
+		?>
+	</tr>
+	<?php } ?>
+  </tbody>
+</table>
+</div>
+
 <script>
 let tambah, edit, remove;
 
@@ -123,7 +180,7 @@ function openEditPopup(row) {
     "jam-mulai": row.jam_mulai,
     "jam-selesai": row.jam_selesai,
     pelajaran: row.mata_pelajaran,
-    guru: row.guru_id || ""    // fallback to "" if null
+    guru: row.guru_id || "NULL"    // fallback to "" if null
   });
 
   FurtexUtil.showAnimated(edit);
@@ -142,62 +199,32 @@ function openRemovePopup(row) {
   FurtexUtil.showAnimated(hapus);
 }
 
+// Add event listener for Tambah Jadwal button
+document.getElementById("tambahJadwal").addEventListener("click", function() {
+  FurtexUtil.showAnimated(tambah);
+  return false;
+});
+
+// Event delegation for Edit buttons
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("edit-btn") || e.target.closest(".edit-btn")) {
+    const button = e.target.classList.contains("edit-btn") ? e.target : e.target.closest(".edit-btn");
+    const rowData = JSON.parse(button.getAttribute("data-row"));
+    openEditPopup(rowData);
+    e.preventDefault();
+    return false;
+  }
+});
+
+// Event delegation for Delete buttons
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("delete-btn") || e.target.closest(".delete-btn")) {
+    const button = e.target.classList.contains("delete-btn") ? e.target : e.target.closest(".delete-btn");
+    const rowData = JSON.parse(button.getAttribute("data-row"));
+    openRemovePopup(rowData);
+    e.preventDefault();
+    return false;
+  }
+});
 
 </script>
-
-<?php
-if ($logged) {
-	?>
-	<div class="d-flex justify-content-between mb-3">
-	<a href="#" onclick="FurtexUtil.showAnimated(tambah)" class="btn btn-a">+ Tambah Jadwal</a>
-	</div>
-	<?php
-}
-?>
-<div class="container-table">
-<table class="table table-bordered table-striped mb-0">
-  <thead class="table-dark">
-	<tr>
-	  <th>No</th>
-	  <th>Hari</th>
-	  <th>Kelas</th>
-	  <th>Mata Pelajaran</th>
-	  <th>Jam Mulai</th>
-	  <th>Jam Selesai</th>
-	  <?php
-		if ($logged) {
-			echo "<th>Aksi</th>";
-		}
-		?>
-	</tr>
-  </thead>
-  <tbody>
-	<?php 
-	$no = 1;
-	foreach($result as $row) { ?>
-	<tr>
-	  <td><?= $no++ ?></td>
-	  <td><?= htmlspecialchars($row['hari']) ?></td>
-	  <td><?= htmlspecialchars($row['kelas']) ?></td>
-	  <td><?= htmlspecialchars($row['mata_pelajaran']) ?></td>
-	  <td><?= htmlspecialchars($row['jam_mulai']) ?></td>
-	  <td><?= htmlspecialchars($row['jam_selesai']) ?></td>
-	  <?php
-		if ($logged) {
-			?>
-		  <td>
-			<a href="#"
-			   onclick="openEditPopup(<?= htmlspecialchars(json_encode($row)) ?>)"
-			   class="btn btn-sm btn-b">Edit</a>
-			<a href="#"
-			   onclick='openRemovePopup(<?= htmlspecialchars(json_encode($row)) ?>)'
-			   class="btn btn-sm btn-danger">Hapus</a>
-		  </td>
-		  <?php
-		}
-		?>
-	</tr>
-	<?php } ?>
-  </tbody>
-</table>
-</div>

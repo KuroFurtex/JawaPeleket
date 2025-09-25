@@ -7,12 +7,8 @@ if (isset($_POST['submit']) && isUserLoggedIn()) {
     $jam_mulai = mysqli_real_escape_string($conn, $_POST['jam-mulai']);
     $jam_selesai = mysqli_real_escape_string($conn, $_POST['jam-selesai']);
     $pelajaran = mysqli_real_escape_string($conn, $_POST['pelajaran']);
-    $guru = mysqli_real_escape_string($conn, $_POST['guru']);
-	if ($guru === "null") {
-		$values = [$kelas, $hari, $jam_mulai, $jam_selesai, $pelajaran, null];
-	} else {
-		$values = [$kelas, $hari, $jam_mulai, $jam_selesai, $pelajaran, $guru];
-	}
+    $guru = isset($_POST['guru']) && $_POST['guru'] !== "" ? mysqli_real_escape_string($conn, $_POST['guru']) : null;
+	$values = [$kelas, $hari, $jam_mulai, $jam_selesai, $pelajaran, $guru];
 	echo implode(", ", addToTable(
 		["kelas_id", "hari", "jam_mulai", "jam_selesai", "mata_pelajaran", "guru_id"],
 		"jadwal_pelajaran",

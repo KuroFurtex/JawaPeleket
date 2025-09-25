@@ -1,6 +1,23 @@
 var FurtexUtil = {
+	// Track created dialogues and scripts for each page
+	_dialogues: {},
+	_scripts: {},
+	
 	createPopup: function(title, okLabel, cancelLabel, components, method="post", action="") {
 	  const dialog = document.createElement("dialog");
+	  dialog.classList.add('furtex-dialog');
+	  
+	  // Store the dialog in the current page's dialogues
+	  const pageId = this.pageId;
+	  if (!this._dialogues[pageId]) this._dialogues[pageId] = [];
+	  this._dialogues[pageId].push(dialog);
+	  
+	  // Register cleanup for this dialog
+	  this.registerCleanup(() => {
+		if (dialog && dialog.parentNode) {
+		  dialog.parentNode.removeChild(dialog);
+		}
+	  });
 
 	  const header = document.createElement("h3");
 	  header.textContent = title;
@@ -166,6 +183,74 @@ var FurtexUtil = {
 		}, 200); // match your CSS transition duration!
 	},
 	
+	createPageDialogue: function(title, content, buttons = []) {
+		const dialog = document.createElement("dialog");
+		dialog.classList.add('furtex-dialog', 'page-dialogue');
+		
+		// Store the dialog in the current page's dialogues
+		const pageId = this.pageId;
+		if (!this._dialogues[pageId]) this._dialogues[pageId] = [];
+		this._dialogues[pageId].push(dialog);
+		
+		// Create dialogue content
+		const header = document.createElement("h3");
+		header.textContent = title;
+		
+		const contentDiv = document.createElement("div");
+		contentDiv.classList.add('dialogue-content');
+		contentDiv.innerHTML = content;
+		
+		// Create buttons
+		const buttonRow = document.createElement("div");
+		buttonRow.style.display = "flex";
+		buttonRow.style.justifyContent = "flex-end";
+		buttonRow.style.gap = "0.5em";
+		buttonRow.style.marginTop = "1em";
+		
+		if (buttons.length === 0) {
+			// Default close button
+			const closeBtn = document.createElement("button");
+			closeBtn.textContent = "Close";
+			closeBtn.type = "button";
+			closeBtn.classList.add("btn");
+			closeBtn.onclick = () => dialog.close();
+			buttonRow.appendChild(closeBtn);
+		} else {
+			// Custom buttons
+			buttons.forEach(btn => {
+				const button = document.createElement("button");
+				button.textContent = btn.text;
+				button.type = "button";
+				button.classList.add("btn");
+				if (btn.action) {
+					button.onclick = () => {
+						btn.action();
+						if (btn.closeOnClick !== false) {
+							dialog.close();
+						}
+					};
+				} else {
+					button.onclick = () => dialog.close();
+				}
+				buttonRow.appendChild(button);
+			});
+		}
+		
+		dialog.appendChild(header);
+		dialog.appendChild(contentDiv);
+		dialog.appendChild(buttonRow);
+		document.body.appendChild(dialog);
+		
+		// Register cleanup for this dialog
+		this.registerCleanup(() => {
+			if (dialog && dialog.parentNode) {
+				dialog.parentNode.removeChild(dialog);
+			}
+		});
+		
+		return dialog;
+	},
+	
 	editPopup: function(dialog, values) {
 	  // values = { inputName: newValue, anotherName: newValue, ... }
 	  const form = dialog.querySelector("form");
@@ -185,16 +270,68 @@ var FurtexUtil = {
 	  });
 	},
 	
-	pageCleanups: [],
+	// page instance id (increments on each navigation)
+	pageId: 1,
+	// internal map: pageId -> [cleanupFns]
+	_cleanups: {},
 
-	// Register cleanup
-	registerCleanup: function(fn) {
-		this.pageCleanups.push(fn);
+	// CLEANUP SYSTEM (per-page)
+	registerCleanup: function(fn, pageId = null) {
+		const id = pageId === null ? this.pageId : pageId;
+		if (!this._cleanups[id]) this._cleanups[id] = [];
+		this._cleanups[id].push(fn);
+		// return unregister function
+		return () => {
+			if (!this._cleanups[id]) return;
+			this._cleanups[id] = this._cleanups[id].filter(x => x !== fn);
+		};
 	},
 
-	// Run & clear cleanups
-	runCleanups: function() {
-		this.pageCleanups.forEach(fn => fn());
-		this.pageCleanups = [];
-	}
+	// Track scripts added to the page
+	trackScript: function(script) {
+		const pageId = this.pageId;
+		if (!this._scripts[pageId]) this._scripts[pageId] = [];
+		this._scripts[pageId].push(script);
+		return script;
+	},
+	
+	runCleanupsFor: function(pageId) {
+		// Clean up dialogues for this page
+		if (this._dialogues[pageId]) {
+			this._dialogues[pageId].forEach(dialog => {
+				try {
+					if (dialog && dialog.parentNode) {
+						dialog.parentNode.removeChild(dialog);
+					}
+				} catch(e) {
+					console.warn("dialogue cleanup failed", e);
+				}
+			});
+			delete this._dialogues[pageId];
+		}
+		
+		// Clean up scripts for this page
+		if (this._scripts[pageId]) {
+			this._scripts[pageId].forEach(script => {
+				try {
+					if (script && script.parentNode) {
+						script.parentNode.removeChild(script);
+					}
+				} catch(e) {
+					console.warn("script cleanup failed", e);
+				}
+			});
+			delete this._scripts[pageId];
+		}
+		
+		// Run registered cleanup functions
+		if (!this._cleanups[pageId]) return;
+		try {
+			this._cleanups[pageId].forEach(fn => {
+				try { fn(); } catch(e){ console.warn("cleanup failed", e); }
+			});
+		} finally {
+			delete this._cleanups[pageId];
+		}
+  }
 }
